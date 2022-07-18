@@ -27,6 +27,7 @@ filename trace1.txt
 
 Verdict: False
 ```
+![alt text](https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Gp.ps)
 
 Co-Safety property: F q ("q eventually holds")
 ```bash
@@ -37,6 +38,7 @@ filename trace1.txt
 
 Verdict: True
 ```
+![alt text](https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Fq.ps)
 
 Non-Monitorable property: GF p ("it always true that eventually p holds")
 ```bash
@@ -47,6 +49,7 @@ filename trace1.txt
 
 Verdict: Give Up
 ```
+![alt text](https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/GFp.ps)
 
 Safety property: G p ("p always holds")
 ```bash
