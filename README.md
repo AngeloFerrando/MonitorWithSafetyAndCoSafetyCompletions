@@ -3,6 +3,7 @@
 ## What to install
 - SPOT: https://spot.lrde.epita.fr/
 - Automata: https://github.com/caleb531/automata#class-dfafa
+- GraphViz: https://pypi.org/project/graphviz/
 
 ## How to run
 
