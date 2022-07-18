@@ -1,0 +1,6 @@
+digraph Monitor {
+	0 [label=0 color=azure4 shape=doublecircle style=filled]
+	0 -> 0 [label=q]
+	0 -> 0 [label=r]
+	0 -> 0 [label=p]
+}

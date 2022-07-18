@@ -5,6 +5,8 @@ import buddy
 from enum import Enum
 from automata.fa.nfa import NFA
 from automata.fa.dfa import DFA
+import graphviz
+import pylab
 spot.setup()
 
 class Verdict(Enum):
@@ -31,12 +33,9 @@ class Verdict(Enum):
 class Monitor:
     def __init__(self, phi, aps):
         self.__aps = aps
-        self.__autP, self.__outP = self.setup(phi)
-        self.__autN, self.__outN = self.setup(spot.formula('!(' + phi + ')').to_str())
-        self.autP = self.__autP
-        self.outP = self.__outP
-        self.autN = self.__autN
-        self.outN = self.__outN
+        autP, outP = self.setup(phi)
+        autN, outN = self.setup(spot.formula('!(' + phi + ')').to_str())
+        self.__aut, self.__out = self.combine(autP, outP, autN, outN)
     def setup(self, phi):
         aut = spot.degeneralize(spot.translate(phi, 'complete'))
         states = set()
@@ -114,21 +113,105 @@ class Monitor:
                 out[s] = Verdict.unknown
         return dfa, out
     def next(self, ev):
-        self.__autP.initial_state = self.__autP.transitions[self.__autP.initial_state][ev]
-        self.__autN.initial_state = self.__autN.transitions[self.__autN.initial_state][ev]
+        self.__aut.initial_state = self.__aut.transitions[self.__aut.initial_state][ev]
+        return self.__out[self.__aut.initial_state]
+        # autP.initial_state = autP.transitions[autP.initial_state][ev]
+        # autN.initial_state = autN.transitions[autN.initial_state][ev]
+        # if outP[autP.initial_state] == Verdict.ff:
+        #     return Verdict.ff
+        # if outN[autN.initial_state] == Verdict.ff:
+        #     return Verdict.tt
+        # if outP[autP.initial_state] == Verdict.tt and outN[autN.initial_state] == Verdict.tt:
+        #     return Verdict.giveUp
+        # if outP[autP.initial_state] == Verdict.tt and outN[autN.initial_state] == Verdict.unknown:
+        #     return Verdict.nf
+        # if outP[autP.initial_state] == Verdict.unknown and outN[autN.initial_state] == Verdict.tt:
+        #     return Verdict.nt
+        # else:
+        #     return Verdict.unknown
+    def combine(self, autP, outP, autN, outN):
+        states = set()
+        for s1 in autP.states:
+            for s2 in autN.states:
+                states.add((s1, s2))
+        initial_state = str((autP.initial_state, autN.initial_state))
+        final_states = set()
+        for s1 in autP.final_states:
+            for s2 in autN.final_states:
+                final_states.add(str((s1, s2)))
+        transitions = {}
+        for (s1, s2) in states:
+            transitions[str((s1,s2))] = {}
+            for ev in autP.transitions[s1]:
+                if ev in autN.transitions[s2]:
+                    transitions[str((s1,s2))][ev] = str((autP.transitions[s1][ev], autN.transitions[s2][ev]))
+        aut = DFA(
+            states=set([str(s) for s in states]),
+            input_symbols=set(self.__aps),
+            transitions=transitions,
+            initial_state=initial_state,
+            final_states=final_states
+        )
+        aut._remove_unreachable_states()
+        out = {}
+        for (s1, s2) in states:
+            if str((s1, s2)) not in aut.states: continue
+            if outP[s1] == Verdict.ff:
+                out[str((s1, s2))] = Verdict.ff
+            elif outN[s2] == Verdict.ff:
+                out[str((s1, s2))] = Verdict.tt
+            elif outP[s1] == Verdict.tt and outN[s2] == Verdict.tt:
+                out[str((s1, s2))] = Verdict.giveUp
+            elif outP[s1] == Verdict.tt and outN[s2] == Verdict.unknown:
+                out[str((s1, s2))] = Verdict.nf
+            elif outP[s1] == Verdict.unknown and outN[s2] == Verdict.tt:
+                out[str((s1, s2))] = Verdict.nt
+            else:
+                out[str((s1, s2))] = Verdict.unknown
+        return aut, out
+    def show(self):
+        dot = graphviz.Digraph('Monitor')
+        d = {}
+        i = 0
+        for s in self.__aut.states:
+            d[s] = str(i)
+            if self.__out[s] == Verdict.tt:
+                if s == self.__aut.initial_state:
+                    dot.node(str(i), label=str(i), color='green', style='filled', shape='doublecircle')
+                else:
+                    dot.node(str(i), label=str(i), color='green', style='filled')
+            elif self.__out[s] == Verdict.ff:
+                if s == self.__aut.initial_state:
+                    dot.node(str(i), label=str(i), color='red', style='filled', shape='doublecircle')
+                else:
+                    dot.node(str(i), label=str(i), color='red', style='filled')
+            elif self.__out[s] == Verdict.giveUp:
+                if s == self.__aut.initial_state:
+                    dot.node(str(i), label=str(i), color='azure4', style='filled', shape='doublecircle')
+                else:
+                    dot.node(str(i), label=str(i), color='azure4', style='filled')
+            elif self.__out[s] == Verdict.nf:
+                if s == self.__aut.initial_state:
+                    dot.node(str(i), label=str(i), color='aquamarine3', style='filled', shape='doublecircle')
+                else:
+                    dot.node(str(i), label=str(i), color='aquamarine3', style='filled')
+            elif self.__out[s] == Verdict.nt:
+                if s == self.__aut.initial_state:
+                    dot.node(str(i), label=str(i), color='coral1', style='filled', shape='doublecircle')
+                else:
+                    dot.node(str(i), label=str(i), color='coral1', style='filled')
+            else:
+                if s == self.__aut.initial_state:
+                    dot.node(str(i), label=str(i), color='yellow', style='filled', shape='doublecircle')
+                else:
+                    dot.node(str(i), label=str(i), color='yellow', style='filled')
+            i = i + 1
+        for s in self.__aut.states:
+            for ev in self.__aut.transitions[s]:
+                dot.edge(d[s], d[self.__aut.transitions[s][ev]], label=ev)
+        with open('monitor.dot', 'w') as file:
+            file.write(str(dot))
 
-        if self.__outP[self.__autP.initial_state] == Verdict.ff:
-            return Verdict.ff
-        if self.__outN[self.__autN.initial_state] == Verdict.ff:
-            return Verdict.tt
-        if self.__outP[self.__autP.initial_state] == Verdict.tt and self.__outN[self.__autN.initial_state] == Verdict.tt:
-            return Verdict.giveUp
-        if self.__outP[self.__autP.initial_state] == Verdict.tt and self.__outN[self.__autN.initial_state] == Verdict.unknown:
-            return Verdict.nf
-        if self.__outP[self.__autP.initial_state] == Verdict.unknown and self.__outN[self.__autN.initial_state] == Verdict.tt:
-            return Verdict.nt
-        else:
-            return Verdict.unknown
 
 def main(args):
     ltl = args[1]
@@ -139,6 +222,7 @@ def main(args):
     print('filename ' + str(filename))
 
     monitor = Monitor(ltl, ap)
+    monitor.show()
     verdict = None
     try:
         with open(filename, 'r') as file:

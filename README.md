@@ -76,3 +76,8 @@ filename trace2.txt
 
 Verdict: Unknown
 ```
+
+The tool also generates a .dot file that can be visualised, for instance as follows:
+```bash
+$- dot -Tps monitor.dot -o monitor.ps
+```
