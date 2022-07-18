@@ -27,7 +27,7 @@ filename trace1.txt
 
 Verdict: False
 ```
-<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Gp.jpg" width="150px">
+<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Gp.jpg" width="200px">
 
 Co-Safety property: F q ("q eventually holds")
 ```bash
@@ -38,7 +38,7 @@ filename trace1.txt
 
 Verdict: True
 ```
-<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Fq.jpg" width="150px">
+<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Fq.jpg" width="200px">
 
 Non-Monitorable property: GF p ("it always true that eventually p holds")
 ```bash
@@ -49,7 +49,7 @@ filename trace1.txt
 
 Verdict: Give Up
 ```
-<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/GFp.jpg" width="150px">
+<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/GFp.jpg" width="200px">
 
 Safety property: G p ("p always holds")
 ```bash
@@ -80,7 +80,7 @@ filename trace2.txt
 
 Verdict: Unknown
 ```
-<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Xp.jpg" width="150px">
+<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Xp.jpg" width="200px">
 
 The tool also generates a .dot file that can be visualised, for instance as follows:
 ```bash
