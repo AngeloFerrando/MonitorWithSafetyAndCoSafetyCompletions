@@ -91,7 +91,7 @@ filename trace3.txt
 
 Verdict: Give Up
 ```
-<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/PaperProperty.jpg" width="300px">
+<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/PaperProperty.jpg" width="400px">
 
 The tool also generates a .dot file that can be visualised, for instance as follows:
 ```bash
