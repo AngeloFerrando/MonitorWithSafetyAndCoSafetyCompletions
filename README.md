@@ -82,6 +82,17 @@ Verdict: Unknown
 ```
 <img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/Xp.jpg" width="200px">
 
+Submitted paper's running example: 
+```bash
+$- python main.py '((a & Fb) | (c & GFd))' '[a,b,c,d]' trace3.txt
+ltl ((a & Fb) | (c & GFd))
+ap {'a', 'b', 'c', 'd'}
+filename trace3.txt
+
+Verdict: Give Up
+```
+<img src="https://github.com/AngeloFerrando/MonitorWithSafetyAndCoSafetyCompletions/blob/main/img/PaperProperty.jpg" width="200px">
+
 The tool also generates a .dot file that can be visualised, for instance as follows:
 ```bash
 $- dot -Tps monitor.dot -o monitor.ps
